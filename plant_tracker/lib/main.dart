@@ -4,9 +4,9 @@ void main() {
   runApp(MaterialApp(
     home: Scaffold(
       appBar: AppBar(
-        title: Text('Lab 1 Part A'),
+        title: Text('Adam Sheeres-Paulicpulle'),
       ),
-      body: Text('Hello World'),
+      body: Center(child: Text('Hello World')),
     ),
   ));
 }
