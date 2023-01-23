@@ -1,210 +1,164 @@
 import 'package:flutter/material.dart';
+import 'dart:developer';
 
 void main() => runApp(MyApp());
 
-List<String> names = ['Riverside Park', 'The Boathouse Tea Room'];
-List<List<String>> things = [
-  ['Picnic', 'Playground', 'Hiking'],
-  ['Boating', 'Ice-Cream', 'Tea']
+List<List<String>> buttons = [
+  ['Clear', '/'],
+  ['7', '8', '9', '*'],
+  ['4', '5', '6', '-'],
+  ['1', '2', '3', '+'],
+  ['0', '='],
 ];
-List<String> addresses = ['709 Woolwich St, Guelph', '116 Gordon St, Guelph'];
-List myImages = [
-  Image.asset('assets/images/riversidePark.png'),
-  Image.asset('assets/images/boathouseTearoom.png')
+
+String displayEquation = '';
+
+List<List<Color>> colorsForButtons = [
+  [Colors.blue, Colors.grey],
+  [Colors.blue, Colors.blue, Colors.blue, Colors.grey],
+  [Colors.blue, Colors.blue, Colors.blue, Colors.grey],
+  [Colors.blue, Colors.blue, Colors.blue, Colors.grey],
+  [Colors.blue, Colors.blue],
 ];
-List iconList = [Icons.money_off_csred_rounded, Icons.attach_money];
 
-int thingsCurRow = 0;
-int thingsCurCol = 0;
+List<List<double>> sizes = [
+  [3.3, 1],
+  [1, 1, 1, 1],
+  [1, 1, 1, 1],
+  [1, 1, 1, 1],
+  [1, 3.3],
+];
 
-//Text(daysOfWeek[dayOfWeek])
-// class getTaskRow extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     dayOfWeek++;
-//     return Expanded(
-//         child: Container(
-//       color: Colors.white,
-//       margin: EdgeInsets.all(5),
-//       height: 75,
-//       child: Align(
-//         alignment: Alignment.centerLeft,
-//         child: Container(
-//             width: 100,
-//             height: 100,
-//             decoration:
-//                 BoxDecoration(color: Colors.orange, shape: BoxShape.circle),
-//             child: Column(
-//               crossAxisAlignment: CrossAxisAlignment.center,
-//               mainAxisAlignment: MainAxisAlignment.center,
-//               children: <Widget>[Text(daysOfWeek[dayOfWeek])],
-//             )),
-//       ),
-//     ));
-//   }
-// }
+class BodyWidget extends StatefulWidget {
+  const BodyWidget({super.key});
 
-/**TODO: 
- * Create a 'card' for the two things
- * align the 'aspects' about each of the cards 
- * get that line showing up -> spacing? 
- */
+  @override
+  State<BodyWidget> createState() => _BodyState();
+}
 
-class BodyWidget extends StatelessWidget {
+class _BodyState extends State<BodyWidget> {
+  evaluate() {
+    log(displayEquation);
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(children: [
-        for (int i = 0; i < 2; i++)
-          Container(
-              alignment: Alignment.center,
-              margin: const EdgeInsets.only(
-                  left: 30, top: 10, right: 30, bottom: 100),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(10),
-                    topRight: Radius.circular(10),
-                    bottomLeft: Radius.circular(10),
-                    bottomRight: Radius.circular(10)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: const Offset(0, 3), // changes position of shadow
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  //Vertical Alignment for the Card
-                  Text(
-                    names[i],
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  myImages[i],
-                  thingsAbout(),
-                  Text(addresses[i]),
-                  Icon(iconList[i])
-                ],
-              ))
-      ]),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      // ignore: prefer_const_literals_to_create_immutables
+      children: [
+        const SizedBox(
+          height: 100,
+          width: 100,
+          child: Text(
+            '5+',
+            style: TextStyle(fontSize: 25),
+          ),
+        ),
+        const CalculatorButtons(),
+      ],
     );
   }
 }
 
-class thingsAbout extends StatelessWidget {
+class CalculatorButtons extends StatelessWidget {
+  const CalculatorButtons({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            width: 100.0,
-            height: 30.0,
-            margin: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
-                  bottomLeft: Radius.circular(10),
-                  bottomRight: Radius.circular(10)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 5,
-                  blurRadius: 7,
-                  offset: const Offset(0, 3), // changes position of shadow
-                ),
-              ],
-            ),
-            child: Center(
-              child: Text(
-                things[thingsCurCol][thingsCurRow++ % 3],
-                style: const TextStyle(
-                  fontFamily: 'Arial',
-                  height: 1,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ),
-          Container(
-            width: 100.0,
-            height: 30.0,
-            margin: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
-                  bottomLeft: Radius.circular(10),
-                  bottomRight: Radius.circular(10)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 5,
-                  blurRadius: 7,
-                  offset: const Offset(0, 3), // changes position of shadow
-                ),
-              ],
-            ),
-            child: Center(
-              child: Text(
-                things[thingsCurCol][thingsCurRow++ % 3],
-                style: const TextStyle(
-                  fontFamily: 'Arial',
-                  height: 1,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ),
-          Container(
-            width: 100.0,
-            height: 30.0,
-            margin: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
-                  bottomLeft: Radius.circular(10),
-                  bottomRight: Radius.circular(10)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 5,
-                  blurRadius: 7,
-                  offset: const Offset(0, 3), // changes position of shadow
-                ),
-              ],
-            ),
-            child: Center(
-              child: Text(
-                things[thingsCurCol++][thingsCurRow++ % 3],
-                style: const TextStyle(
-                  fontFamily: 'Arial',
-                  height: 1,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          )
-        ]);
+    var rows = _getCalcRow();
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: rows[0],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: rows[1],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: rows[2],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: rows[3],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: rows[4],
+        )
+      ],
+    );
   }
 }
 
-class MyApp extends StatelessWidget {
+List<List<Widget>> _getCalcRow() {
+  List<List<Widget>> cols = [];
+  List<Widget> row = [];
+
+  //dynamically construct the cols
+  for (int i = 0; i <= 4; i++) {
+    row = [];
+    for (int j = 0; j < buttons[i].length; j++) {
+      var c = Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: SizedBox(
+            width: (70.0 * (sizes[i][j])),
+            height: 70,
+            child: FloatingActionButton(
+              backgroundColor: colorsForButtons[i][j],
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5.0)),
+              onPressed: () {
+                switch (buttons[i][j]) {
+                  case '=':
+                    displayEquation += buttons[i][j];
+                    log('evaluatingExpression');
+                    break;
+
+                  case 'Clear':
+                    displayEquation = '';
+                    break;
+
+                  default:
+                    displayEquation += buttons[i][j];
+                    break;
+                }
+
+                log(displayEquation);
+              },
+              child: Text(buttons[i][j]),
+            ),
+          ));
+      row.add(c);
+    }
+    cols.add(row);
+  }
+  return cols;
+}
+
+//All code is called from here
+class MyApp extends StatefulWidget {
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+//this builds the material App
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-            title: const Text('Part A'),
+            title: const Text('Part B'),
             backgroundColor: const Color.fromARGB(255, 156, 232, 94),
             titleTextStyle: const TextStyle(
                 color: Color.fromARGB(255, 0, 0, 0), fontSize: 22)),
