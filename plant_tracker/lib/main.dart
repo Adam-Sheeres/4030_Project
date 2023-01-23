@@ -18,7 +18,6 @@ class getTaskRow extends StatelessWidget {
       child: Align(
         alignment: Alignment.centerLeft,
         child: Container(
-            margin: EdgeInsets.only(left: 5),
             width: 50,
             height: 50,
             decoration:
@@ -38,11 +37,40 @@ class BodyWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
         child: Column(children: [
-      getTaskRow(),
-      getTaskRow(),
-      getTaskRow(),
-      getTaskRow(),
-      getTaskRow()
+      for (int i = 0; i < 5; i++)
+        Row(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Stack(children: [
+                  Container(
+                    height: 75,
+                    color: Colors.blue,
+                  ),
+                  Positioned(
+                      top: 15,
+                      left: 5,
+                      child: Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                              color: Colors.orange, shape: BoxShape.circle),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[Text(daysOfWeek[i])],
+                          ))),
+                  Positioned(
+                      right: 135,
+                      top: 20,
+                      child: Column(
+                          children: [Text("task one"), Text("task two")]))
+                ]),
+              ),
+            )
+          ],
+        )
     ]));
   }
 }
@@ -53,7 +81,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-            title: Text('Adam Sheeres'),
+            title: Text('Part A'),
             backgroundColor: Color.fromARGB(255, 156, 232, 94),
             titleTextStyle:
                 TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 22)),
