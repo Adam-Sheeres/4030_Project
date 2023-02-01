@@ -323,6 +323,10 @@ List<Recipe> temp_recipe_list = [
 
 String displayEquation = '';
 
+TextStyle getTitleStyle() {
+  return const TextStyle(fontWeight: FontWeight.bold, fontSize: 24);
+}
+
 List<List<Color>> colorsForButtons = [
   [Colors.blue, Colors.grey],
   [Colors.blue, Colors.blue, Colors.blue, Colors.grey],
@@ -339,6 +343,14 @@ List<List<double>> sizes = [
   [1, 3.3],
 ];
 
+List<Widget> getIngredientsWidget(Recipe curRecipe) {
+  List<Widget> ingredients = [];
+  for (var i = 0; i < curRecipe.ingredients.length; i++) {
+    ingredients.add(Text('${i + 1}.${curRecipe.ingredients[i]}'));
+  }
+  return ingredients;
+}
+
 class BodyWidget extends StatefulWidget {
   const BodyWidget({super.key});
 
@@ -346,89 +358,197 @@ class BodyWidget extends StatefulWidget {
   State<BodyWidget> createState() => _BodyState();
 }
 
-Widget iconsForFood(int number) {
-  Recipe curRecipe = temp_recipe_list[number];
-  return Stack(
-    children: <Widget>[
-      Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10.0),
-          image: DecorationImage(
-            image: NetworkImage(curRecipe.imageUrl),
-            fit: BoxFit.cover,
+Widget SecondPage(BuildContext context, Recipe curRecipe) {
+  return Padding(
+      padding: EdgeInsets.all(8),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Image.network(curRecipe.imageUrl),
+          const SizedBox(height: 10),
+          Row(
+            children: <Widget>[
+              const Text(
+                "Author: ",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+              ),
+              Text(curRecipe.recipeAuthor)
+            ],
           ),
-        ),
-      ),
-      Container(
-        decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.6),
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Row(
+          const SizedBox(height: 10),
+          Column(
+            children: <Widget>[
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Description: ",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                ),
+              ),
+              Text(curRecipe.description)
+            ],
+          ),
+          const SizedBox(height: 10),
+          Column(
+            children: <Widget>[
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Ingredients: ",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: getIngredientsWidget(curRecipe),
+              )
+            ],
+          ),
+          const SizedBox(height: 10),
+          Column(
+            children: <Widget>[
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Time to Cook: ",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                ),
+              ),
+              Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text('${curRecipe.cookTime} mins'))
+            ],
+          ),
+          const SizedBox(height: 10),
+          Column(
+            children: <Widget>[
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Directions: ",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                ),
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  for (var i = 0; i < curRecipe.directions.length; i++)
+                    Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text('${i + 1}.${curRecipe.directions[i]}'))
+                ],
+              )
+            ],
+          ),
+        ],
+      ));
+}
+
+Widget iconsForFood(int number, context) {
+  Recipe curRecipe = temp_recipe_list[number];
+  return GestureDetector(
+      onTap: () {
+        log("Moving to page ${curRecipe.recipeName}");
+        Navigator.push(context, MaterialPageRoute<void>(
+          builder: (BuildContext context) {
+            return Scaffold(
+                appBar: AppBar(
+                    centerTitle: true, title: Text(curRecipe.recipeName)),
+                body: SecondPage(context, curRecipe));
+          },
+        ));
+        //we want to shift the navigation to another pane, with a back button
+      },
+      child: Stack(
+        children: <Widget>[
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.0),
+              image: DecorationImage(
+                image: NetworkImage(curRecipe.imageUrl),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.6),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Container(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    curRecipe.recipeAuthor,
-                    style: const TextStyle(color: Colors.white),
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Container(
+                        alignment: Alignment.topLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            curRecipe.recipeAuthor,
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        )),
+                    Container(
+                        alignment: Alignment.topRight,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Icon(
+                            Icons.favorite,
+                            color: curRecipe.isFavourite
+                                ? Colors.red
+                                : Colors.white,
+                          ),
+                        )),
+                  ],
                 ),
                 Container(
-                  alignment: Alignment.topRight,
-                  child: Icon(
-                    Icons.favorite,
-                    color: curRecipe.isFavourite ? Colors.red : Colors.white,
+                  alignment: Alignment.bottomLeft,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Align(
+                          alignment: Alignment.centerLeft,
+                          child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                curRecipe.recipeName,
+                                style: const TextStyle(
+                                    fontSize: 24.0, color: Colors.white),
+                              ))),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            const Icon(Icons.access_time, color: Colors.white),
+                            Text(
+                              (curRecipe.cookTime).toString(),
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                            const Icon(Icons.monetization_on,
+                                color: Colors.white),
+                            Text(
+                              (curRecipe.ingredients.length).toString(),
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                            const Icon(Icons.help, color: Colors.white),
+                            Text(
+                              curRecipe.recipeDifficulty,
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
-            Container(
-              alignment: Alignment.bottomLeft,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        curRecipe.recipeName,
-                        style: const TextStyle(
-                            fontSize: 24.0, color: Colors.white),
-                      )),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        const Icon(Icons.access_time, color: Colors.white),
-                        Text(
-                          (curRecipe.cookTime).toString(),
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        const Icon(Icons.monetization_on, color: Colors.white),
-                        Text(
-                          (curRecipe.ingredients.length).toString(),
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        const Icon(Icons.help, color: Colors.white),
-                        Text(
-                          curRecipe.recipeDifficulty,
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    ],
-  );
+          ),
+        ],
+      ));
 }
 
 class _BodyState extends State<BodyWidget> {
@@ -446,7 +566,8 @@ class _BodyState extends State<BodyWidget> {
       mainAxisSpacing: 10,
       crossAxisCount: 2,
       children: <Widget>[
-        for (int i = 0; i < temp_recipe_list.length - 1; i++) iconsForFood(i),
+        for (int i = 0; i < temp_recipe_list.length; i++)
+          iconsForFood(i, context),
       ],
     );
   }
