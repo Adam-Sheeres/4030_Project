@@ -367,19 +367,24 @@ Widget iconsForFood(int number) {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Container(
-              alignment: Alignment.topLeft,
-              child: Text(
-                curRecipe.recipeAuthor,
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-            Container(
-              alignment: Alignment.topRight,
-              child: Icon(
-                Icons.favorite,
-                color: curRecipe.isFavourite ? Colors.red : Colors.white,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Container(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    curRecipe.recipeAuthor,
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.topRight,
+                  child: Icon(
+                    Icons.favorite,
+                    color: curRecipe.isFavourite ? Colors.red : Colors.white,
+                  ),
+                ),
+              ],
             ),
             Container(
               alignment: Alignment.bottomLeft,
@@ -401,17 +406,17 @@ Widget iconsForFood(int number) {
                         const Icon(Icons.access_time, color: Colors.white),
                         Text(
                           (curRecipe.cookTime).toString(),
-                          style: TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                         ),
                         const Icon(Icons.monetization_on, color: Colors.white),
                         Text(
                           (curRecipe.ingredients.length).toString(),
-                          style: TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                         ),
                         const Icon(Icons.help, color: Colors.white),
                         Text(
                           curRecipe.recipeDifficulty,
-                          style: TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                         ),
                       ],
                     ),
