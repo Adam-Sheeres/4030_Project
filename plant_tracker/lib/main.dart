@@ -172,7 +172,7 @@ List<Recipe> temp_recipe_list = [
     totalLikes: 100,
     imageUrl:
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQuWGPfVMQGj5-5xaQKzPKq5nq8YfxYBKyT_Q&usqp=CAU",
-    isFavourite: false,
+    isFavourite: true,
     ingredients: [
       "Unsalted Butter",
       "Lemon",
@@ -203,7 +203,7 @@ List<Recipe> temp_recipe_list = [
     totalLikes: 100,
     imageUrl:
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWBae6o3LV40BxPryhtDrCYvtNekTt9AKBlg&usqp=CAU",
-    isFavourite: false,
+    isFavourite: true,
     ingredients: [
       "All Purpose Flour",
       "Sugar",
@@ -346,16 +346,84 @@ class BodyWidget extends StatefulWidget {
   State<BodyWidget> createState() => _BodyState();
 }
 
-Widget iconsForFood(number) {
+Widget iconsForFood(int number) {
   Recipe curRecipe = temp_recipe_list[number];
-  //Text(curRecipe.recipeName)
-  return Container(
-      decoration: BoxDecoration(
-          border: Border.all(
-            color: (Colors.blue[300])!,
+  return Stack(
+    children: <Widget>[
+      Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10.0),
+          image: DecorationImage(
+            image: NetworkImage(curRecipe.imageUrl),
+            fit: BoxFit.cover,
           ),
-          borderRadius: BorderRadius.all(Radius.circular(20))),
-      child: Text(curRecipe.recipeName));
+        ),
+      ),
+      Container(
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.6),
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Container(
+              alignment: Alignment.topLeft,
+              child: Text(
+                curRecipe.recipeAuthor,
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+            Container(
+              alignment: Alignment.topRight,
+              child: Icon(
+                Icons.favorite,
+                color: curRecipe.isFavourite ? Colors.red : Colors.white,
+              ),
+            ),
+            Container(
+              alignment: Alignment.bottomLeft,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        curRecipe.recipeName,
+                        style: const TextStyle(
+                            fontSize: 24.0, color: Colors.white),
+                      )),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        const Icon(Icons.access_time, color: Colors.white),
+                        Text(
+                          (curRecipe.cookTime).toString(),
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        const Icon(Icons.monetization_on, color: Colors.white),
+                        Text(
+                          (curRecipe.ingredients.length).toString(),
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        const Icon(Icons.help, color: Colors.white),
+                        Text(
+                          curRecipe.recipeDifficulty,
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    ],
+  );
 }
 
 class _BodyState extends State<BodyWidget> {
