@@ -343,105 +343,167 @@ List<List<double>> sizes = [
   [1, 3.3],
 ];
 
-List<Widget> getIngredientsWidget(Recipe curRecipe) {
-  List<Widget> ingredients = [];
+// List<Row> getIngredientsWidget(Recipe curRecipe) {
+//   List<Text> ingredients = [];
+//   int ingredientsIterator = curRecipe.ingredients.length;
+//   for (var i = 0; i < curRecipe.ingredients.length; i++) {
+//     String retString = '${i + 1}. ${curRecipe.ingredients[i]}';
+//     ingredients.add(Text(retString));
+//   }
+//   List<Row> rows = [];
+//   for (var i = 0; i < ingredients.length; i += 4) {
+//     List<Text> currentRow = ingredients.sublist(
+//         i, i + 4 < ingredients.length ? i + 4 : ingredients.length);
+//     rows.add(Row(children: currentRow));
+//   }
+//   return rows;
+// }
+
+List<Row> getIngredientsWidget(Recipe curRecipe, BuildContext context) {
+  List<Text> ingredients = [];
+  int ingredientsIterator = curRecipe.ingredients.length;
+
   for (var i = 0; i < curRecipe.ingredients.length; i++) {
-    ingredients.add(Text('${i + 1}.${curRecipe.ingredients[i]}'));
+    ingredients.add(Text('${i + 1}. ${curRecipe.ingredients[i]}'));
   }
-  return ingredients;
-}
 
-class BodyWidget extends StatefulWidget {
-  const BodyWidget({super.key});
+  double maxWidth = MediaQuery.of(context).size.width;
+  List<Row> ingredientsRows = [];
+  List<Expanded> curRow = [];
+  double curRowWidth = 0;
 
-  @override
-  State<BodyWidget> createState() => _BodyState();
+  for (var i = 0; i < ingredients.length; i++) {
+    if (ingredients[i].data != null) {
+      double ingredientsWidth = ingredients[i].data != null
+          ? curRecipe.ingredients[i].length * 14.0
+          : 0;
+
+      if (curRowWidth + ingredientsWidth <= maxWidth) {
+        curRow.add(Expanded(child: ingredients[i]));
+        curRowWidth += ingredientsWidth;
+      } else {
+        ingredientsRows.add(Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: curRow,
+        ));
+        curRow = [Expanded(child: ingredients[i])];
+        curRowWidth = ingredientsWidth;
+      }
+    }
+  }
+
+  ingredientsRows.add(Row(
+    mainAxisAlignment: MainAxisAlignment.start,
+    children: curRow,
+  ));
+
+  return ingredientsRows;
 }
 
 Widget SecondPage(BuildContext context, Recipe curRecipe) {
-  return Padding(
-      padding: EdgeInsets.all(8),
+  return SingleChildScrollView(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Image.network(curRecipe.imageUrl),
-          const SizedBox(height: 10),
-          Row(
-            children: <Widget>[
-              const Text(
-                "Author: ",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-              ),
-              Text(curRecipe.recipeAuthor)
-            ],
-          ),
-          const SizedBox(height: 10),
-          Column(
-            children: <Widget>[
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Description: ",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-                ),
-              ),
-              Text(curRecipe.description)
-            ],
-          ),
-          const SizedBox(height: 10),
-          Column(
-            children: <Widget>[
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Ingredients: ",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-                ),
-              ),
+    mainAxisAlignment: MainAxisAlignment.start,
+    children: [
+      Container(
+          height: 200.0,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+                image: NetworkImage(curRecipe.imageUrl), fit: BoxFit.cover),
+            color: Colors.black.withOpacity(0.6),
+          )),
+      const SizedBox(height: 10),
+      Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: getIngredientsWidget(curRecipe),
-              )
-            ],
-          ),
-          const SizedBox(height: 10),
-          Column(
-            children: <Widget>[
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Time to Cook: ",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-                ),
-              ),
-              Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text('${curRecipe.cookTime} mins'))
-            ],
-          ),
-          const SizedBox(height: 10),
-          Column(
-            children: <Widget>[
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Directions: ",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-                ),
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  for (var i = 0; i < curRecipe.directions.length; i++)
-                    Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text('${i + 1}.${curRecipe.directions[i]}'))
+                children: <Widget>[
+                  const Text(
+                    "Author: ",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                  ),
+                  Text(curRecipe.recipeAuthor)
                 ],
-              )
+              ),
+              const SizedBox(height: 10),
+              Column(
+                children: <Widget>[
+                  const Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Description: ",
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                    ),
+                  ),
+                  Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(curRecipe.description))
+                ],
+              ),
+              const SizedBox(height: 10),
+              Column(
+                children: [
+                  const Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Ingredients: ",
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                    ),
+                  ),
+                  ...getIngredientsWidget(curRecipe, context).map((row) => row),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Column(
+                children: <Widget>[
+                  const Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Time to Cook: ",
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                    ),
+                  ),
+                  Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text('${curRecipe.cookTime} mins'))
+                ],
+              ),
+              const SizedBox(height: 10),
+              Column(
+                children: <Widget>[
+                  const Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Directions: ",
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                    ),
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      for (var i = 0; i < curRecipe.directions.length; i++)
+                        Column(
+                          children: [
+                            Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                    '${i + 1}. ${curRecipe.directions[i]}')),
+                            const SizedBox(height: 5)
+                          ],
+                        )
+                    ],
+                  )
+                ],
+              ),
             ],
-          ),
-        ],
-      ));
+          ))
+    ],
+  ));
 }
 
 Widget iconsForFood(int number, context) {
@@ -518,7 +580,7 @@ Widget iconsForFood(int number, context) {
                                     fontSize: 24.0, color: Colors.white),
                               ))),
                       Padding(
-                        padding: const EdgeInsets.only(bottom: 8.0),
+                        padding: const EdgeInsets.only(bottom: 4.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget>[
@@ -527,7 +589,7 @@ Widget iconsForFood(int number, context) {
                               (curRecipe.cookTime).toString(),
                               style: const TextStyle(color: Colors.white),
                             ),
-                            const Icon(Icons.monetization_on,
+                            const Icon(Icons.shopping_cart_outlined,
                                 color: Colors.white),
                             Text(
                               (curRecipe.ingredients.length).toString(),
@@ -551,47 +613,136 @@ Widget iconsForFood(int number, context) {
       ));
 }
 
-class _BodyState extends State<BodyWidget> {
-  evaluate() {
-    log(displayEquation);
-    setState(() {});
-  }
+class NavigationDrawer extends StatelessWidget {
+  const NavigationDrawer({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return GridView.count(
-      primary: false,
-      padding: const EdgeInsets.all(20),
-      crossAxisSpacing: 10,
-      mainAxisSpacing: 10,
-      crossAxisCount: 2,
-      children: <Widget>[
-        for (int i = 0; i < temp_recipe_list.length; i++)
-          iconsForFood(i, context),
-      ],
-    );
-  }
+  Widget build(BuildContext context) => Drawer(
+        child: SingleChildScrollView(
+            child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            BuildHeader(context),
+            BuildMenuItems(context),
+          ],
+        )),
+      );
 }
 
-//All code is called from here
-class MyApp extends StatefulWidget {
+Widget BuildHeader(BuildContext context) => Container(
+      color: Colors.blue.shade700,
+      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+      child: Column(children: const [
+        Padding(
+          padding: EdgeInsets.only(top: 40, bottom: 40),
+          child: Text(
+            "Recipie App",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 35.0),
+          ),
+        )
+      ]),
+    );
+
+Widget BuildMenuItems(BuildContext context) => Column(
+      children: [
+        //add more kids here if need be
+        ListTile(
+          leading: const Icon(Icons.list_alt),
+          title: const Text("Recipes"),
+          onTap: () {},
+        ),
+        ListTile(
+          leading: const Icon(
+            Icons.favorite,
+            color: Colors.red,
+          ),
+          title: const Text("Favourite Recipes"),
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute<void>(
+              builder: (BuildContext context) {
+                return MaterialApp(
+                  home: Scaffold(
+                    appBar: AppBar(
+                        title: const Text("Adam's Recipie Book"),
+                        backgroundColor:
+                            const Color.fromARGB(255, 156, 232, 94),
+                        centerTitle: true,
+                        titleTextStyle: const TextStyle(
+                            color: Color.fromARGB(255, 0, 0, 0), fontSize: 22)),
+                    body: const Align(
+                        alignment: Alignment.center,
+                        child: Text("Favourite Recipies")),
+                    drawer: const NavigationDrawer(),
+                  ),
+                );
+              },
+            ));
+            // handle Recipes button press
+          },
+        ),
+        ListTile(
+          leading: const Icon(Icons.settings),
+          title: const Text("Settings"),
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute<void>(
+              builder: (BuildContext context) {
+                return MaterialApp(
+                  home: Scaffold(
+                    appBar: AppBar(
+                        title: const Text("Adam's Recipie Book"),
+                        backgroundColor:
+                            const Color.fromARGB(255, 156, 232, 94),
+                        centerTitle: true,
+                        titleTextStyle: const TextStyle(
+                            color: Color.fromARGB(255, 0, 0, 0), fontSize: 22)),
+                    body: const Align(
+                        alignment: Alignment.center, child: Text("Settings")),
+                    drawer: const NavigationDrawer(),
+                  ),
+                );
+              },
+            ));
+            // handle Recipes button press
+          },
+        ),
+      ],
+    );
+
+Widget getBody(BuildContext context) {
+  return GridView.count(
+    primary: false,
+    padding: const EdgeInsets.all(20),
+    crossAxisSpacing: 10,
+    mainAxisSpacing: 10,
+    crossAxisCount: 2,
+    children: <Widget>[
+      for (int i = 0; i < temp_recipe_list.length; i++)
+        iconsForFood(i, context),
+    ],
+  );
+}
+
+class MyApp extends StatelessWidget {
   @override
-  State<MyApp> createState() => _MyAppState();
+  Widget build(BuildContext context) {
+    return MaterialApp(home: MyHome());
+  }
 }
 
 //this builds the material App
-class _MyAppState extends State<MyApp> {
+class MyHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-            title: const Text('Lab five part B'),
-            backgroundColor: const Color.fromARGB(255, 156, 232, 94),
-            titleTextStyle: const TextStyle(
-                color: Color.fromARGB(255, 0, 0, 0), fontSize: 22)),
-        body: BodyWidget(),
-      ),
+          appBar: AppBar(
+              title: const Text("Adam's Recipie Book"),
+              backgroundColor: const Color.fromARGB(255, 156, 232, 94),
+              centerTitle: true,
+              titleTextStyle: const TextStyle(
+                  color: Color.fromARGB(255, 0, 0, 0), fontSize: 22)),
+          drawer: const NavigationDrawer(),
+          body: getBody(context)),
     );
   }
 }
